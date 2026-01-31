@@ -4,10 +4,26 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { z } from "zod";
 
+// Helper pour parser une date de façon sécurisée
+function parseDate(dateStr: string): Date {
+  // Format attendu: YYYY-MM-DD
+  const match = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!match) {
+    throw new Error("Format de date invalide. Utilisez YYYY-MM-DD");
+  }
+  const [, year, month, day] = match;
+  const yearNum = parseInt(year, 10);
+  // Validation de l'année (entre 2000 et 2100)
+  if (yearNum < 2000 || yearNum > 2100) {
+    throw new Error("Année invalide. Doit être entre 2000 et 2100");
+  }
+  return new Date(yearNum, parseInt(month, 10) - 1, parseInt(day, 10));
+}
+
 const MilestoneSchema = z.object({
   title: z.string().min(1, "Titre requis"),
   description: z.string().optional(),
-  targetDate: z.string(),
+  targetDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Format de date invalide"),
   ownerId: z.string().optional(),
   workstreamId: z.string().optional(),
   projectId: z.string(),
@@ -31,7 +47,7 @@ export async function createMilestone(formData: FormData) {
     data: {
       title: validated.title,
       description: validated.description,
-      targetDate: new Date(validated.targetDate),
+      targetDate: parseDate(validated.targetDate),
       ownerId: validated.ownerId || null,
       workstreamId: validated.workstreamId || null,
       projectId: validated.projectId,
@@ -59,7 +75,7 @@ export async function updateMilestone(id: string, formData: FormData) {
     data: {
       title: data.title,
       description: data.description,
-      targetDate: new Date(data.targetDate),
+      targetDate: parseDate(data.targetDate),
       ownerId: data.ownerId || null,
       workstreamId: data.workstreamId || null,
       completedAt: data.completed ? new Date() : null,
