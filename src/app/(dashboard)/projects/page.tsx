@@ -1,11 +1,14 @@
-import { Suspense } from "react";
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { db } from "@/lib/db";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { PageHeader } from "@/components/layout/page-header";
+import { Modal } from "@/components/ui/modal";
+import { ProjectForm } from "@/components/forms/project-form";
 import { formatDate, getStatusColor } from "@/lib/utils";
 import {
   FolderKanban,
@@ -16,39 +19,73 @@ import {
   Target,
 } from "lucide-react";
 
-async function getProjects() {
-  const projects = await db.project.findMany({
-    include: {
-      workstreams: {
-        include: {
-          _count: {
-            select: { tasks: true },
-          },
-        },
-      },
-      tasks: {
-        select: { status: true },
-      },
-      milestones: {
-        select: { id: true, completedAt: true },
-      },
-    },
-    orderBy: { createdAt: "desc" },
-  });
+type Project = {
+  id: string;
+  name: string;
+  description: string | null;
+  targetDate: Date | null;
+  status: string;
+  workstreams: Array<{
+    id: string;
+    name: string;
+    _count: { tasks: number };
+  }>;
+  tasks: Array<{ status: string }>;
+  milestones: Array<{ id: string; completedAt: Date | null }>;
+};
 
-  return { projects };
+async function fetchProjects(): Promise<Project[]> {
+  const res = await fetch("/api/projects", { cache: "no-store" });
+  if (!res.ok) return [];
+  return res.json();
 }
 
-async function ProjectsContent() {
-  const { projects } = await getProjects();
+export default function ProjectsPage() {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    loadProjects();
+  }, []);
+
+  const loadProjects = async () => {
+    setLoading(true);
+    const data = await fetchProjects();
+    setProjects(data);
+    setLoading(false);
+  };
+
+  const handleSuccess = () => {
+    setIsModalOpen(false);
+    loadProjects();
+  };
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="h-8 w-48 bg-zinc-800 rounded shimmer" />
+        <div className="h-64 bg-zinc-800 rounded-xl shimmer" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
       <PageHeader
         title="Projects"
         description="Projets et workstreams ONYX"
-        action={{ label: "Nouveau projet" }}
+        action={{ label: "Nouveau projet", onClick: () => setIsModalOpen(true) }}
       />
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Nouveau projet"
+        description="Créer un nouveau projet ONYX"
+      >
+        <ProjectForm onSuccess={handleSuccess} onCancel={() => setIsModalOpen(false)} />
+      </Modal>
 
       {/* Projects list */}
       <div className="space-y-6">
@@ -192,20 +229,5 @@ async function ProjectsContent() {
         )}
       </div>
     </div>
-  );
-}
-
-export default function ProjectsPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="space-y-6">
-          <div className="h-8 w-48 bg-zinc-800 rounded shimmer" />
-          <div className="h-64 bg-zinc-800 rounded-xl shimmer" />
-        </div>
-      }
-    >
-      <ProjectsContent />
-    </Suspense>
   );
 }

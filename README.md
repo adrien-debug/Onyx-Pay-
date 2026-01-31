@@ -10,6 +10,14 @@ Plateforme interne de project management et launch ops pour le lancement ONYX à
 - Prochaines actions prioritaires
 - Registre des risques avec scores
 
+### Projects (CRUD complet)
+- Création, modification, suppression de projets
+- Page de détail avec statistiques complètes
+- Gestion des workstreams par projet
+- Vue d'ensemble avec progression et statistiques
+- Suivi des jalons et tâches par projet
+- Liens rapides vers Tasks, Roadmap, Risks
+
 ### Tasks (CRUD complet)
 - Création, modification, suppression de tâches
 - Filtres par statut, priorité, workstream, assigné
@@ -108,7 +116,21 @@ L'application est disponible sur **http://localhost:3000**
 
 ## Premier utilisateur
 
-Créez votre premier utilisateur admin via l'interface ou directement en base de données.
+Créez un utilisateur admin avec la commande :
+
+```bash
+npm run db:create-admin
+```
+
+**Credentials par défaut:**
+- Email: `admin@onyx.com`
+- Password: `onyx2025`
+- Rôle: ADMIN
+
+Vous pouvez personnaliser via les variables d'environnement :
+- `ADMIN_EMAIL`
+- `ADMIN_PASSWORD`
+- `ADMIN_NAME`
 
 **Note:** Les données de seed/demo ont été supprimées. La base démarre vide et propre.
 
