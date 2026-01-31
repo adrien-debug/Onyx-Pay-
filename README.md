@@ -87,14 +87,15 @@ cd "/Users/adrienbeyondcrypto/Desktop/Onyx Pay/onyx-launch-ops"
 # Installer les dépendances
 npm install
 
+# Copier et configurer les variables d'environnement
+cp .env.production.example .env
+# Éditer .env avec vos vraies valeurs (DATABASE_URL, NEXTAUTH_SECRET, etc.)
+
 # Générer le client Prisma
 npm run db:generate
 
-# Créer la base de données
+# Créer les tables dans la base de données
 npm run db:push
-
-# Remplir avec les données de démonstration
-npm run db:seed
 ```
 
 ## Lancement
@@ -103,17 +104,13 @@ npm run db:seed
 npm run dev
 ```
 
-L'application est disponible sur **http://localhost:3002** (ou 3000 si libre)
+L'application est disponible sur **http://localhost:3000**
 
-## Utilisateurs de test
+## Premier utilisateur
 
-| Email | Password | Rôle |
-|-------|----------|------|
-| admin@onyx.com | onyx2025 | ADMIN |
-| pm@onyx.com | onyx2025 | PM |
-| ops@onyx.com | onyx2025 | OPS |
-| legal@onyx.com | onyx2025 | LEGAL |
-| sales@onyx.com | onyx2025 | SALES |
+Créez votre premier utilisateur admin via l'interface ou directement en base de données.
+
+**Note:** Les données de seed/demo ont été supprimées. La base démarre vide et propre.
 
 ## Structure du projet
 
@@ -121,8 +118,7 @@ L'application est disponible sur **http://localhost:3002** (ou 3000 si libre)
 onyx-launch-ops/
 ├── prisma/
 │   ├── schema.prisma      # Modèles de données
-│   ├── seed.ts            # Données de démonstration
-│   └── dev.db             # Base SQLite locale
+│   └── migrations/        # Migrations de base de données
 ├── src/
 │   ├── app/
 │   │   ├── (dashboard)/   # Pages authentifiées
@@ -193,34 +189,23 @@ npm run start        # Start production
 npm run lint         # Linting
 npm run db:generate  # Générer client Prisma
 npm run db:push      # Push schema vers DB
-npm run db:seed      # Seed données démo
-npm run db:reset     # Reset + seed
+npm run db:migrate   # Créer une migration
 npm run db:studio    # Interface Prisma Studio
 ```
 
-## Configuration PostgreSQL (Production)
+## Déploiement sur Railway
 
-Modifier `.env` :
+1. **Ajouter PostgreSQL** dans votre projet Railway
+2. **Copier DATABASE_URL** depuis les variables Railway
+3. **Configurer les variables d'environnement** dans Railway:
+   - `DATABASE_URL` (fourni automatiquement par Railway)
+   - `NEXTAUTH_URL` (votre URL de production)
+   - `NEXTAUTH_SECRET` (générer avec `openssl rand -base64 32`)
+   - `NODE_ENV=production`
 
-```env
-DATABASE_URL="postgresql://user:password@host:5432/onyx_launch_ops"
-```
+4. **Pousser vers GitHub** - Railway déploiera automatiquement
 
-Puis modifier `prisma/schema.prisma` :
-
-```prisma
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-```
-
-Et exécuter :
-
-```bash
-npm run db:push
-npm run db:seed
-```
+Les migrations Prisma s'exécutent automatiquement au build via `prisma generate`.
 
 ## Note importante
 
