@@ -7,7 +7,7 @@ import { z } from "zod";
 const RunbookSchema = z.object({
   title: z.string().min(1, "Titre requis"),
   type: z.string().min(1, "Type requis"),
-  content: z.string().optional(),
+  content: z.string().default(""),
   checklist: z.string().optional(),
   version: z.string().default("1.0"),
   isActive: z.boolean().default(true),
@@ -17,8 +17,8 @@ export async function createRunbook(formData: FormData) {
   const data = {
     title: formData.get("title") as string,
     type: formData.get("type") as string,
-    content: formData.get("content") as string || "",
-    checklist: formData.get("checklist") as string || undefined,
+    content: (formData.get("content") as string) || "",
+    checklist: formData.get("checklist") as string | null,
     version: formData.get("version") as string || "1.0",
     isActive: formData.get("isActive") === "true",
   };
@@ -26,7 +26,14 @@ export async function createRunbook(formData: FormData) {
   const validated = RunbookSchema.parse(data);
 
   await db.runbook.create({
-    data: validated,
+    data: {
+      title: validated.title,
+      type: validated.type,
+      content: validated.content,
+      checklist: validated.checklist || null,
+      version: validated.version,
+      isActive: validated.isActive,
+    },
   });
 
   revalidatePath("/ops");
