@@ -87,18 +87,18 @@ export function canAccess(userRole: string, requiredRoles: string[]): boolean {
   return requiredRoles.includes(userRole);
 }
 
-export const ROLE_PERMISSIONS = {
+export const ROLE_PERMISSIONS: Record<string, readonly string[]> = {
   ADMIN: ["*"],
   PM: ["projects", "tasks", "milestones", "hardware", "legal", "pricing", "rewards", "content", "ops", "decisions", "risks"],
   OPS: ["tasks", "hardware", "ops", "runbooks"],
   LEGAL: ["legal", "tasks"],
   SALES: ["pricing", "tasks", "content"],
   VIEWER: ["view"],
-} as const;
+};
 
 export function hasPermission(role: string, permission: string): boolean {
-  const permissions = ROLE_PERMISSIONS[role as keyof typeof ROLE_PERMISSIONS];
+  const permissions = ROLE_PERMISSIONS[role];
   if (!permissions) return false;
   if (permissions.includes("*")) return true;
-  return permissions.includes(permission as never);
+  return permissions.includes(permission);
 }

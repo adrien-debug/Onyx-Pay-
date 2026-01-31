@@ -710,36 +710,158 @@ async function main() {
       {
         title: "Venue Launch Checklist",
         type: "venue_launch",
-        content: `# Venue Launch Checklist
-
-## Pré-installation (J-7)
-- [ ] Confirmer date et heure avec venue manager
-- [ ] Vérifier disponibilité du kit ONYX
-- [ ] Préparer documentation formation
-- [ ] Coordonner avec équipe technique locale
-
-## Installation (15 min)
-- [ ] Positionner le support
-- [ ] Installer le device dans la coque
-- [ ] Connecter le chargeur
-- [ ] Vérifier connexion WiFi/4G
-- [ ] Tester l'application
-
-## Configuration (15 min)
-- [ ] Créer compte venue dans backoffice
-- [ ] Configurer paramètres paiement
-- [ ] Ajouter staff
-- [ ] Configurer notifications
-
-## Formation Staff (30 min)
-- [ ] Présentation interface
-- [ ] Processus paiement standard
-- [ ] Gestion incidents
-- [ ] Q&A
-`,
+        content: "Checklist complète pour l'installation ONYX dans une venue",
         checklist: JSON.stringify([
-          { section: "Pré-installation", items: ["Confirmer date", "Kit disponible", "Docs prêts"] },
-          { section: "Installation", items: ["Support", "Device", "Chargeur", "Connexion", "Test"] },
+          {
+            name: "Pré-installation (J-7)",
+            items: [
+              "Confirmer date et heure avec le venue manager",
+              "Vérifier la disponibilité du kit ONYX (device + coque + support + chargeur)",
+              "Préparer documentation de formation",
+              "Coordonner avec l'équipe technique locale",
+            ],
+          },
+          {
+            name: "Installation (15 min)",
+            items: [
+              "Positionner le support sur le comptoir/table",
+              "Installer le device dans la coque",
+              "Connecter le chargeur",
+              "Vérifier la connexion WiFi/4G",
+              "Tester l'application ONYX",
+            ],
+          },
+          {
+            name: "Configuration (15 min)",
+            items: [
+              "Créer le compte venue dans le backoffice",
+              "Configurer les paramètres de paiement",
+              "Ajouter les serveurs/staff",
+              "Configurer les notifications",
+            ],
+          },
+          {
+            name: "Formation Staff (30 min)",
+            items: [
+              "Présentation de l'interface",
+              "Processus de paiement standard",
+              "Gestion des incidents (refus, annulation)",
+              "Q&A avec l'équipe",
+            ],
+          },
+        ]),
+        version: "1.0",
+      },
+      {
+        title: "Guide Incident",
+        type: "incident",
+        content: "Procédures en cas de problème technique ou opérationnel",
+        checklist: JSON.stringify([
+          {
+            name: "Niveau 1: Auto-résolution",
+            items: [
+              "Device ne répond pas → Redémarrage forcé (10s power button)",
+              "Pas de connexion → Vérifier WiFi, basculer sur 4G",
+              "Transaction échouée → Vérifier la carte, réessayer",
+              "App freeze → Fermer et relancer l'app",
+            ],
+          },
+          {
+            name: "Niveau 2: Support à distance",
+            items: [
+              "Contacter le support ONYX via chat in-app",
+              "Fournir: ID venue, description problème, screenshots si possible",
+              "Temps de réponse cible: 15 min (heures ouvrées)",
+            ],
+          },
+          {
+            name: "Niveau 3: Intervention terrain",
+            items: [
+              "Si problème non résolu après 30 min",
+              "Escalader au responsable technique local",
+              "Prévoir remplacement device si nécessaire",
+            ],
+          },
+        ]),
+        version: "1.0",
+      },
+      {
+        title: "Script Onboarding Staff",
+        type: "onboarding",
+        content: "Script de formation pour les nouveaux serveurs",
+        checklist: JSON.stringify([
+          {
+            name: "Introduction (5 min)",
+            items: [
+              "Bienvenue dans la formation ONYX Pay",
+              "Présenter ONYX: paiements modernes pour le hospitality premium",
+              "Avantages pour le staff: tips digitaux, suivi des performances",
+            ],
+          },
+          {
+            name: "Démonstration (10 min)",
+            items: [
+              "Montrer le processus de paiement complet",
+              "Expliquer le QR code et le paiement sans contact",
+              "Démontrer la gestion des tips",
+            ],
+          },
+          {
+            name: "Pratique (10 min)",
+            items: [
+              "Le staff effectue 2-3 transactions test",
+              "Simuler un scénario de refus de carte",
+              "Répondre aux questions",
+            ],
+          },
+          {
+            name: "Récapitulatif (5 min)",
+            items: [
+              "Points clés à retenir",
+              "Où trouver de l'aide (support in-app)",
+              "Remise du guide quick-reference",
+            ],
+          },
+        ]),
+        version: "1.0",
+      },
+      {
+        title: "Matrice d'Escalation",
+        type: "escalation",
+        content: "Définit les niveaux d'escalation pour chaque type de problème",
+        checklist: JSON.stringify([
+          {
+            name: "Technique (device/app)",
+            items: [
+              "L1: Auto-résolution (guide in-app) - SLA 15 min",
+              "L2: Support ONYX (chat/email) - SLA 2h",
+              "L3: Tech Lead terrain - SLA 24h",
+            ],
+          },
+          {
+            name: "Paiement (transaction)",
+            items: [
+              "L1: Retry / alternative payment - Immédiat",
+              "L2: Support partenaire régulé - SLA 1h",
+              "L3: Finance Manager - SLA 4h",
+            ],
+          },
+          {
+            name: "Staff (formation/accès)",
+            items: [
+              "L1: Manager venue - Immédiat",
+              "L2: Ops ONYX - SLA 2h",
+              "L3: Account Manager - SLA 24h",
+            ],
+          },
+          {
+            name: "Sécurité/Fraude",
+            items: [
+              "L1: Suspendre transaction - Immédiat",
+              "L2: Compliance ONYX - SLA 1h",
+              "L3: Partenaire régulé + Legal - SLA 4h",
+            ],
+          },
         ]),
         version: "1.0",
       },
