@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
+import { Loader2, Trash2 } from "lucide-react";
 
 interface ProjectFormProps {
   project?: {
@@ -21,7 +22,9 @@ interface ProjectFormProps {
 
 export function ProjectForm({ project, onSuccess, onCancel }: ProjectFormProps) {
   const [loading, setLoading] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const isEditing = !!project;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -66,10 +69,34 @@ export function ProjectForm({ project, onSuccess, onCancel }: ProjectFormProps) 
           setError(error.error || "Une erreur est survenue");
         }
       }
-    } catch (err) {
+    } catch {
       setError("Une erreur est survenue");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!project || !confirm("Supprimer ce projet ? Toutes les tâches, jalons et risques associés seront également supprimés.")) return;
+    
+    setDeleting(true);
+    setError(null);
+
+    try {
+      const res = await fetch(`/api/projects/${project.id}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        onSuccess?.();
+      } else {
+        const error = await res.json();
+        setError(error.error || "Erreur lors de la suppression");
+      }
+    } catch {
+      setError("Erreur lors de la suppression");
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -134,15 +161,38 @@ export function ProjectForm({ project, onSuccess, onCancel }: ProjectFormProps) 
         </div>
       </div>
 
-      <div className="flex gap-3 pt-4">
-        {onCancel && (
-          <Button type="button" variant="outline" onClick={onCancel} className="flex-1">
-            Annuler
+      <div className="flex justify-between pt-4 border-t border-zinc-800">
+        {isEditing ? (
+          <Button
+            type="button"
+            variant="destructive"
+            onClick={handleDelete}
+            disabled={deleting}
+          >
+            {deleting ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Trash2 className="h-4 w-4 mr-1" />
+            )}
+            Supprimer
           </Button>
+        ) : (
+          <div />
         )}
-        <Button type="submit" disabled={loading} className="flex-1">
-          {loading ? "Enregistrement..." : project ? "Mettre à jour" : "Créer"}
-        </Button>
+
+        <div className="flex gap-2">
+          {onCancel && (
+            <Button type="button" variant="outline" onClick={onCancel}>
+              Annuler
+            </Button>
+          )}
+          <Button type="submit" disabled={loading}>
+            {loading ? (
+              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+            ) : null}
+            {isEditing ? "Sauvegarder" : "Créer"}
+          </Button>
+        </div>
       </div>
     </form>
   );

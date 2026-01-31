@@ -156,12 +156,18 @@ onyx-launch-ops/
 │   │   │   ├── content/
 │   │   │   ├── ops/
 │   │   │   └── settings/
-│   │   ├── api/           # API Routes
+│   │   ├── api/           # API Routes REST
 │   │   │   ├── auth/
+│   │   │   ├── projects/   # CRUD complet
+│   │   │   ├── tasks/      # CRUD complet
+│   │   │   ├── milestones/ # CRUD complet
+│   │   │   ├── risks/      # CRUD complet
+│   │   │   ├── workstreams/# CRUD complet
 │   │   │   ├── hardware/
 │   │   │   ├── legal/
 │   │   │   ├── pricing/
 │   │   │   ├── rewards/
+│   │   │   ├── runbooks/
 │   │   │   └── content/
 │   │   ├── login/
 │   │   └── layout.tsx
@@ -185,7 +191,8 @@ onyx-launch-ops/
 │   │   │   ├── pricing.ts
 │   │   │   ├── rewards.ts
 │   │   │   ├── risks.ts
-│   │   │   └── content.ts
+│   │   │   ├── content.ts
+│   │   │   └── settings.ts  # Gestion profil/users
 │   │   ├── auth.ts
 │   │   ├── db.ts
 │   │   └── utils.ts
@@ -201,6 +208,37 @@ onyx-launch-ops/
 - **Crème**: #FFF2EE
 
 Style premium, glass effects, gradients luxe.
+
+## API REST
+
+Toutes les API sont protégées par authentification. Endpoints disponibles:
+
+| Endpoint | Méthodes | Description |
+|----------|----------|-------------|
+| `/api/projects` | GET, POST | Liste/Création projets |
+| `/api/projects/[id]` | GET, PUT, DELETE | CRUD projet |
+| `/api/tasks` | GET, POST | Liste/Création tâches |
+| `/api/tasks/[id]` | GET, PUT, PATCH, DELETE | CRUD tâche |
+| `/api/milestones` | GET, POST | Liste/Création jalons |
+| `/api/milestones/[id]` | GET, PUT, PATCH, DELETE | CRUD jalon |
+| `/api/risks` | GET, POST | Liste/Création risques |
+| `/api/risks/[id]` | GET, PUT, PATCH, DELETE | CRUD risque |
+| `/api/workstreams` | GET, POST | Liste/Création workstreams |
+| `/api/workstreams/[id]` | GET, PUT, DELETE | CRUD workstream |
+| `/api/hardware` | GET, POST | Liste/Création hardware |
+| `/api/legal` | GET, POST | Liste/Création documents |
+| `/api/pricing` | GET, POST | Liste/Création plans |
+| `/api/rewards` | GET, POST | Liste/Création règles |
+| `/api/content` | GET, POST | Liste/Création contenu |
+| `/api/runbooks` | GET, POST | Liste/Création runbooks |
+
+### Filtrage
+
+Les endpoints supportent le filtrage via query params:
+- `?projectId=xxx` - Filtrer par projet
+- `?status=TODO` - Filtrer par statut
+- `?priority=HIGH` - Filtrer par priorité
+- `?assigneeId=xxx` - Filtrer par assigné
 
 ## Scripts disponibles
 
